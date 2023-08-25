@@ -1,6 +1,3 @@
-import numpy as np
-
-
 def read_file(csvfile):
     try:
         with open(csvfile, 'r') as f:
@@ -14,7 +11,7 @@ def read_file(csvfile):
 
 def save_file_data(read_data):
     data_list = []
-    # get header
+    # get csv header
     header = read_data[0].strip().split(',')
     # save to a dictionary list
     for i in range(1, len(read_data)):
@@ -33,7 +30,7 @@ def filter_country_data(country, data_list):
 
 
 def max_min(data_list):
-    # set default value, value from first line
+    # set default values by values from the first line
     max_min_list = [data_list[0]["Name"], data_list[0]["Name"]]
     max_employees, min_employees = int(data_list[0]["Number of employees"]), int(data_list[0]["Number of employees"])
     # loop to find max and min
@@ -52,7 +49,7 @@ def max_min(data_list):
 
 
 def standard_deviation(country_data_list, data_list):
-    # get the salary list
+    # get the salary lists
     country_salary_list = [int(x["Median Salary"]) for x in country_data_list]
     all_salary_list = [int(x["Median Salary"]) for x in data_list]
     # calculate the standard deviation
@@ -64,14 +61,13 @@ def standard_deviation(country_data_list, data_list):
 def calculate_sd(data_list):
     # calculate length
     length = len(data_list)
+    # standard deviation must contain at least two values
     if length == 1:
         return None
     # calculate mean
     mean = sum(data_list) / length
     # calculate standard deviation
-    diff_sq_sum = 0
-    for x in data_list:
-        diff_sq_sum += (x - mean) ** 2
+    diff_sq_sum = sum([(x - mean) ** 2 for x in data_list])
     return (diff_sq_sum / (length - 1)) ** 0.5
 
 
@@ -93,14 +89,8 @@ def correlation_coefficient(country_data_list):
     profits_mean = sum(profits_2021_list) / len(profits_2021_list)
     median_salary_mean = sum(median_salary_list) / len(median_salary_list)
     # calculate the correlation coefficient, profits_2021_list and median_salary_list have the same length with country_data_list
-    molecule_list = []
-    for i in range(len(country_data_list)):
-        x = profits_2021_list[i]
-        y = median_salary_list[i]
-        molecule_list.append((x - profits_mean) * (y - median_salary_mean))
-    molecule = sum(molecule_list)
-    denominator = (sum([(x - profits_mean) ** 2 for x in profits_2021_list]) * sum( [(y - median_salary_mean) ** 2 for y in median_salary_list])) ** 0.5
-    print(np.corrcoef(profits_2021_list, median_salary_list))
+    molecule = sum([(profits_2021_list[i] - profits_mean) * (median_salary_list[i] - median_salary_mean) for i in range(len(country_data_list))])
+    denominator = (sum([(x - profits_mean) ** 2 for x in profits_2021_list]) * sum([(y - median_salary_mean) ** 2 for y in median_salary_list])) ** 0.5
     return molecule / denominator
 
 
@@ -117,6 +107,9 @@ def main(csvfile, country):
         return None
     # data filter by country
     country_data_list = filter_country_data(country, data_list)
+    if len(country_data_list) == 0:
+        print("read csvfile:%s error: country:%s data is empty" % (csvfile,country))
+        return None
     # maximum and minimum
     max_min_list = max_min(country_data_list)
     # standard deviation
@@ -127,8 +120,3 @@ def main(csvfile, country):
     correlation = correlation_coefficient(country_data_list)
     return max_min_list, stdv, ratio, correlation
 
-
-if __name__ == '__main__':
-    country = "AuSTRAlia"
-    maxMin, stdv, ratio, correlation = main('./Organisations.csv', country)
-    print(maxMin, stdv, ratio, correlation)
