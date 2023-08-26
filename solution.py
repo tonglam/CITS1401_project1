@@ -77,6 +77,8 @@ def profit_ratio(data_list):
     # calculate the ratio
     positive = sum([profit for profit in profits_list if profit > 0])
     negative = abs(sum([profit for profit in profits_list if profit < 0]))
+    if negative == 0:
+        return NaN
     return positive / negative
 
 
@@ -88,7 +90,7 @@ def correlation_coefficient(country_data_list):
     # calculate the means
     profits_mean = sum(profits_2021_list) / len(profits_2021_list)
     median_salary_mean = sum(median_salary_list) / len(median_salary_list)
-    # calculate the correlation coefficient, profits_2021_list and median_salary_list have the same length with country_data_list
+    # calculate the correlation coefficient
     molecule = sum([(profits_2021_list[i] - profits_mean) * (median_salary_list[i] - median_salary_mean) for i in range(len(country_data_list))])
     denominator = (sum([(x - profits_mean) ** 2 for x in profits_2021_list]) * sum([(y - median_salary_mean) ** 2 for y in median_salary_list])) ** 0.5
     return molecule / denominator
