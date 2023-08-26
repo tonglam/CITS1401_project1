@@ -1,9 +1,12 @@
+import pytest as pytest
 import solution as solution
 import numpy as np
 import pandas as pd
 
-
 csvfile = "./Organisations.csv"
+
+
+# tolerance = 0.01
 
 
 def read_file(csvfile):
@@ -46,6 +49,8 @@ def check_stdv(country, stdv, country_data_list, data_list):
     np_sd_all = np.std([int(x["Median Salary"]) for x in data_list])
     solution_sd_country = stdv[0]
     solution_sd_all = stdv[1]
+    pytest.approx(np_sd_country, solution_sd_country)
+    pytest.approx(np_sd_all, solution_sd_all)
     if np_sd_country != solution_sd_country or np_sd_all != solution_sd_all:
         raise Exception("country:%s standard deviation is wrong, np:[%d, %d], solution:[%d, %d]"
                         % country, np_sd_country, np_sd_all, solution_sd_country, solution_sd_all)
@@ -67,26 +72,45 @@ def check_correlation(country, solution_corr, country_data_list):
         raise Exception("country:%s correlation is wrong, pd:[%d], solution:[%d]" % country, corr, solution_corr)
 
 
-def main():
-    # read file, get all countries
-    read_data = read_file(csvfile)
-    # get data list
-    data_list = save_file_data(read_data)
+def test_case(country, country_data_list, data_list):
+    max_min_list, stdv, ratio, correlation = solution.main(csvfile, country)
+    # check max and min
+    check_max_min(country, max_min_list)
+    # check standard deviation
+    check_stdv(country, stdv, country_data_list, data_list)
+    # check ratio
+    check_ratio(country, ratio)
+    # check correlation
+    check_correlation(country, correlation, country_data_list)
+
+
+def test_one(data_list):
+    country = "Australia"
+    # get country list
+    country_data_list = filter_country_data(country, data_list)
+    test_case(country, country_data_list, data_list)
+
+
+def test_all(read_data, data_list):
     country_list = list(set([read_data[i].strip().split(',')[3] for i in range(len(read_data)) if i > 0]))
     for country in country_list:
         print("start testing country: %s" % country)
         # get country list
         country_data_list = filter_country_data(country, data_list)
-        max_min_list, stdv, ratio, correlation = solution.main(csvfile, country)
-        # check max and min
-        check_max_min(country, max_min_list)
-        # check standard deviation
-        check_stdv(country, stdv, country_data_list, data_list)
-        # check ratio
-        check_ratio(country, ratio)
-        # check correlation
-        check_correlation(country, correlation, country_data_list)
+        test_case(country, country_data_list, data_list)
+
+
+def main():
+    # read file, get all countries
+    read_data = read_file(csvfile)
+    # get data list
+    data_list = save_file_data(read_data)
+    # test one country
+    test_one(data_list)
+    # test all countries
+    test_all(read_data, data_list)
 
 
 if __name__ == "__main__":
     main()
+
