@@ -29,7 +29,10 @@ def filter_country_data(country, data_list):
     return [x for x in data_list if x['Country'].upper() == country.upper()]
 
 
+# founded in the year range of 1981 to 2000 (inclusive)
 def max_min(data_list):
+    # filter by year range
+    data_list = [x for x in data_list if 1981 < int(x["Year founded"]) <= 2000]
     # set default values by values from the first line
     max_min_list = [data_list[0]["Name"], data_list[0]["Name"]]
     max_employees, min_employees = int(data_list[0]["Number of employees"]), int(data_list[0]["Number of employees"])
@@ -78,7 +81,7 @@ def profit_ratio(data_list):
     positive = sum([profit for profit in profits_list if profit > 0])
     negative = abs(sum([profit for profit in profits_list if profit < 0]))
     if negative == 0:
-        return NaN
+        return float('inf')
     return positive / negative
 
 
@@ -93,6 +96,8 @@ def correlation_coefficient(country_data_list):
     # calculate the correlation coefficient
     molecule = sum([(profits_2021_list[i] - profits_mean) * (median_salary_list[i] - median_salary_mean) for i in range(len(country_data_list))])
     denominator = (sum([(x - profits_mean) ** 2 for x in profits_2021_list]) * sum([(y - median_salary_mean) ** 2 for y in median_salary_list])) ** 0.5
+    if denominator == 0:
+        return float('inf')
     return molecule / denominator
 
 

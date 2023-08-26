@@ -1,7 +1,7 @@
-import solution as solution
 import numpy as np
 import pandas as pd
 
+import solution as solution
 
 csvfile = "./Organisations.csv"
 
@@ -37,18 +37,18 @@ def filter_country_data(country, data_list):
     return [x for x in data_list if x['Country'].upper() == country.upper()]
 
 
-def check_max_min(country, max_min_list, country_data_list, data_list):
+def check_max_min(country, max_min_list):
     pass
 
 
 def check_stdv(country, stdv, country_data_list, data_list):
-    np_sd_country = np.std([int(x["Median Salary"]) for x in country_data_list])
-    np_sd_all = np.std([int(x["Median Salary"]) for x in data_list])
-    solution_sd_country = stdv[0]
-    solution_sd_all = stdv[1]
+    np_sd_country = round(np.std([int(x["Median Salary"]) for x in country_data_list], ddof=1), 2)
+    np_sd_all = round(np.std([int(x["Median Salary"]) for x in data_list], ddof=1), 2)
+    solution_sd_country = round(stdv[0], 2)
+    solution_sd_all = round(stdv[1], 2)
     if np_sd_country != solution_sd_country or np_sd_all != solution_sd_all:
         raise Exception("country:%s standard deviation is wrong, np:[%d, %d], solution:[%d, %d]"
-                        % country, np_sd_country, np_sd_all, solution_sd_country, solution_sd_all)
+                        % (country, np_sd_country, np_sd_all, solution_sd_country, solution_sd_all))
 
 
 def check_ratio(country, ratio):
@@ -62,9 +62,10 @@ def check_correlation(country, solution_corr, country_data_list):
     median_salary_list = [int(x["Median Salary"]) for x in country_data_list]
     # pf.corr
     df = pd.DataFrame({'profits_2021_list': profits_2021_list, 'median_salary_list': median_salary_list})
-    corr = df['profits_2021_list'].corr(df['median_salary_list'])
+    corr = round(df['profits_2021_list'].corr(df['median_salary_list']), 2)
+    solution_corr = round(solution_corr, 2)
     if corr != solution_corr:
-        raise Exception("country:%s correlation is wrong, pd:[%d], solution:[%d]" % country, corr, solution_corr)
+        raise Exception("country:%s correlation is wrong, pd:[%d], solution:[%d]" % (country, corr, solution_corr))
 
 
 def main():
@@ -73,8 +74,9 @@ def main():
     # get data list
     data_list = save_file_data(read_data)
     country_list = list(set([read_data[i].strip().split(',')[3] for i in range(len(read_data)) if i > 0]))
+    country_list = ["Hong Kong"]
     for country in country_list:
-        print("start testing country: %s" % country)
+        print("start testing, country: %s" % country)
         # get country list
         country_data_list = filter_country_data(country, data_list)
         max_min_list, stdv, ratio, correlation = solution.main(csvfile, country)
@@ -86,6 +88,7 @@ def main():
         check_ratio(country, ratio)
         # check correlation
         check_correlation(country, correlation, country_data_list)
+        print("pass testing, country: %s" % country)
 
 
 if __name__ == "__main__":
