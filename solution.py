@@ -37,23 +37,10 @@ def max_min(data_list):
     max_min_data_list = [x for x in data_list if 1981 < int(x["Founded"]) <= 2000]
     if len(max_min_data_list) == 0:
         return ["", ""]
-    # set default values by values from the first line
-    max_min_list = [max_min_data_list[0]["Name"].lower(), max_min_data_list[0]["Name"].lower()]
-    max_employees, min_employees = int(max_min_data_list[0]["Number of employees"]), int(
-        max_min_data_list[0]["Number of employees"])
-    # loop to find max and min
-    for i in range(len(max_min_data_list)):
-        line_dict = max_min_data_list[i]
-        number = int(line_dict["Number of employees"])
-        if number > max_employees:
-            max_employees = number
-            # update the max organization name
-            max_min_list[0] = line_dict["Name"].lower()
-        elif number < min_employees:
-            min_employees = number
-            # update the min organization name
-            max_min_list[1] = line_dict["Name"].lower()
-    return max_min_list
+    # find max and min
+    max_name = max(max_min_data_list, key=lambda x: int(x["Number of employees"]))["Name"].lower()
+    min_name = min(max_min_data_list, key=lambda x: int(x["Number of employees"]))["Name"].lower()
+    return [max_name, min_name]
 
 
 def standard_deviation(country_data_list, data_list):
@@ -94,18 +81,18 @@ def profit_ratio(data_list):
 
 def correlation_coefficient(country_data_list):
     # only use the organisations which show an increase in profits from 2020 to 2021
-    country_data_list = [x for x in country_data_list
-                         if int(x["Profits in 2021(Million)"]) - int(x["Profits in 2020(Million)"]) > 0]
+    country_valid_data_list = [x for x in country_data_list if
+                               int(x["Profits in 2021(Million)"]) - int(x["Profits in 2020(Million)"]) > 0]
     # get the profits in 2021 list
-    profits_2021_list = [int(x["Profits in 2021(Million)"]) for x in country_data_list]
+    profits_2021_list = [int(x["Profits in 2021(Million)"]) for x in country_valid_data_list]
     # get the median salaries list
-    median_salary_list = [int(x["Median Salary"]) for x in country_data_list]
+    median_salary_list = [int(x["Median Salary"]) for x in country_valid_data_list]
     # calculate the means
     profits_mean = sum(profits_2021_list) / len(profits_2021_list)
     median_salary_mean = sum(median_salary_list) / len(median_salary_list)
     # calculate the correlation coefficient between profits in 2021 and median salaries
     molecule = sum([(profits_2021_list[i] - profits_mean) * (median_salary_list[i] - median_salary_mean) for i
-                    in range(len(country_data_list))])
+                    in range(len(country_valid_data_list))])
     denominator = ((sum([(x - profits_mean) ** 2 for x in profits_2021_list]) *
                     sum([(y - median_salary_mean) ** 2 for y in median_salary_list]))
                    ** 0.5)
@@ -144,3 +131,9 @@ def main(csvfile, country):
     # correlation
     correlation = correlation_coefficient(country_data_list)
     return max_min_list, stdv, ratio, correlation
+
+
+if __name__ == "__main__":
+    path = "./Organisations.csv"
+    a, b, c, d = main(path, "Australia")
+    print(a, b, c, d)
