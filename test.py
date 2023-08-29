@@ -1,5 +1,4 @@
 import logging as log
-
 import numpy as np
 import pandas as pd
 import pytest as pytest
@@ -42,29 +41,25 @@ def filter_country_data(country, data_list):
 def check_max_min(max_min_list, country_data_list):
     solution_max_name = max_min_list[0]
     solution_min_name = max_min_list[1]
-    solution_max = max([x["Number of employees"] for x in country_data_list])
-    solution_min = max([x["Number of employees"] for x in country_data_list])
+    expect_max = max([int(x["Number of employees"]) for x in country_data_list])
+    expect_min = min([int(x["Number of employees"]) for x in country_data_list])
     # check
     for x in country_data_list:
         name = x["Name"].lower()
-        assert int(x["Number of employees"]) <= solution_max, (
-                "max name is wrong, detected:[%s], solution:[%s]" % (name, solution_max_name))
-        assert int(x["Number of employees"]) >= solution_min, (
-                "min name is wrong, detected:[%s], solution:[%s]" % (name, solution_min_name))
+        assert int(x["Number of employees"]) <= expect_max, ("max name is wrong, expected:[%s], solution:[%s]" % (name, solution_max_name))
+        assert int(x["Number of employees"]) >= expect_min, ("min name is wrong, expected:[%s], solution:[%s]" % (name, solution_min_name))
 
 
 def check_stdv(country, stdv, country_data_list, data_list):
-    np_sd_country = np.std([int(x["Median Salary"]) for x in country_data_list])
-    np_sd_all = np.std([int(x["Median Salary"]) for x in data_list])
+    expect_sd_country = np.std([int(x["Median Salary"]) for x in country_data_list])
+    expect_sd_all = np.std([int(x["Median Salary"]) for x in data_list])
     solution_sd_country = round(stdv[0], 4)
     solution_sd_all = round(stdv[1], 4)
-    pytest.approx(np_sd_country, solution_sd_country)
-    pytest.approx(np_sd_all, solution_sd_all)
+    pytest.approx(expect_sd_country, solution_sd_country)
+    pytest.approx(expect_sd_all, solution_sd_all)
     # check
-    assert np_sd_country == solution_sd_country, ("country:%s standard deviation is wrong, np:[%d], solution:[%d]"
-                                                  % country, np_sd_country, solution_sd_country)
-    assert np_sd_all == solution_sd_all, ("country:%s standard deviation is wrong, np:[%d], solution:[%d]"
-                                          % country, np_sd_all, solution_sd_all)
+    assert expect_sd_country == solution_sd_country, ("country:%s standard deviation is wrong, expected:[%d], solution:[%d]" % country, expect_sd_country, solution_sd_country)
+    assert expect_sd_all == solution_sd_all, ("country:%s standard deviation is wrong, expected:[%d], solution:[%d]" % country, expect_sd_all, solution_sd_all)
 
 
 def check_ratio(country, ratio):
@@ -78,10 +73,9 @@ def check_correlation(country, solution_corr, country_data_list):
     median_salary_list = [int(x["Median Salary"]) for x in country_data_list]
     # pf.corr
     df = pd.DataFrame({'profits_2021_list': profits_2021_list, 'median_salary_list': median_salary_list})
-    corr = round(df['profits_2021_list'].corr(df['median_salary_list']), 4)
+    expected_corr = round(df['profits_2021_list'].corr(df['median_salary_list']), 4)
     # check
-    assert corr == solution_corr, (
-            "country:%s correlation is wrong, pd:[%d], solution:[%d]" % (country, corr, solution_corr))
+    assert expected_corr == solution_corr, ("country:%s correlation is wrong, expected:[%d], solution:[%d]" % (country, expected_corr, solution_corr))
 
 
 def test_case(country, country_data_list, data_list):
@@ -96,8 +90,9 @@ def test_case(country, country_data_list, data_list):
     check_correlation(country, correlation, country_data_list)
 
 
-@pytest.mark.parametrize("csvfile, country", ["./Organisations.csv", "Belgium"])
-def test_one_case(csvfile, country):
+def test_one_case():
+    csvfile = "./Organisations.csv"
+    country = "Belgium"
     # read file, get all countries
     read_data = read_file(csvfile)
     # get data list
@@ -108,8 +103,8 @@ def test_one_case(csvfile, country):
     test_case(country, country_data_list, data_list)
 
 
-@pytest.mark.parametrize("csvfile", ["./Organisations.csv"])
-def test_all_case(csvfile):
+def test_all_case():
+    csvfile = "./Organisations.csv"
     # read file, get all countries
     read_data = read_file(csvfile)
     # get data list

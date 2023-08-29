@@ -7,8 +7,6 @@ def read_file(csvfile):
     except IOError:
         print("read csvfile:[%s] error" % csvfile)
         return None
-    finally:
-        f.close()
 
 
 def save_file_data(read_data):
@@ -131,9 +129,3 @@ def main(csvfile, country):
     # correlation
     correlation = correlation_coefficient(country_data_list)
     return max_min_list, stdv, ratio, correlation
-
-
-if __name__ == "__main__":
-    path = "./Organisations.csv"
-    a, b, c, d = main(path, "Australia")
-    print(a, b, c, d)
