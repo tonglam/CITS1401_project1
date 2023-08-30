@@ -35,10 +35,16 @@ def max_min(data_list):
     max_min_data_list = [x for x in data_list if 1981 < int(x["Founded"]) <= 2000]
     if len(max_min_data_list) == 0:
         return ["", ""]
-    # find max and min
-    max_name = max(max_min_data_list, key=lambda x: int(x["Number of employees"]))["Name"].lower()
-    min_name = min(max_min_data_list, key=lambda x: int(x["Number of employees"]))["Name"].lower()
-    return [max_name, min_name]
+    # find max and min number
+    max_number = max(max_min_data_list, key=lambda x: int(x["Number of employees"]))["Name"]
+    min_number = min(max_min_data_list, key=lambda x: int(x["Number of employees"]))["Name"]
+    # find max and min name list
+    max_name_list = [x["Name"] for x in max_min_data_list if x["Number of employees"] == max_number]
+    min_name_list = [x["Name"] for x in max_min_data_list if x["Number of employees"] == min_number]
+    # sort the list by name
+    max_name_list = max_name_list.sort()
+    min_name_list = min_name_list.sort()
+    return [max_name_list[0], min_name_list[0]]
 
 
 def standard_deviation(country_data_list, data_list):
@@ -129,3 +135,7 @@ def main(csvfile, country):
     # correlation
     correlation = correlation_coefficient(country_data_list)
     return max_min_list, stdv, ratio, correlation
+
+
+if __name__ == '__main__':
+    main("./Organisations.csv", "Belgium")
