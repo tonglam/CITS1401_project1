@@ -36,14 +36,14 @@ def max_min(data_list):
     if len(max_min_data_list) == 0:
         return ["", ""]
     # find max and min number
-    max_number = max(max_min_data_list, key=lambda x: int(x["Number of employees"]))["Name"]
-    min_number = min(max_min_data_list, key=lambda x: int(x["Number of employees"]))["Name"]
+    max_number = max(max_min_data_list, key=lambda x: int(x["Number of employees"]))["Number of employees"]
+    min_number = min(max_min_data_list, key=lambda x: int(x["Number of employees"]))["Number of employees"]
     # find max and min name list
     max_name_list = [x["Name"] for x in max_min_data_list if x["Number of employees"] == max_number]
     min_name_list = [x["Name"] for x in max_min_data_list if x["Number of employees"] == min_number]
     # sort the list by name
-    max_name_list = max_name_list.sort()
-    min_name_list = min_name_list.sort()
+    max_name_list.sort()
+    min_name_list.sort()
     return [max_name_list[0], min_name_list[0]]
 
 
@@ -138,4 +138,4 @@ def main(csvfile, country):
 
 
 if __name__ == '__main__':
-    main("./Organisations.csv", "Belgium")
+    print(main("./Organisations.csv", "Belgium"))
