@@ -5,7 +5,6 @@ def read_file(csvfile):
             data = f.readlines()
             return data
     except IOError:
-        print("read csvfile:[%s] error" % csvfile)
         return None
 
 
@@ -24,7 +23,6 @@ def save_file_data(read_data):
 
 def filter_country_data(country, data_list):
     if len(data_list) == 0:
-        print("filter country:[%s] data error: country has no data" % country)
         return []
     # filter by country
     return [x for x in data_list if x['Country'].upper() == country.upper()]
@@ -35,6 +33,8 @@ def max_min(country_data_list):
     max_min_data_list = [x for x in country_data_list if 1981 < int(x["Founded"]) <= 2000]
     if len(max_min_data_list) == 0:
         return ["", ""]
+    elif len(max_min_data_list) == 1:
+        return [max_min_data_list[0]["Name"], max_min_data_list[0]["Name"]]
     # find max and min number
     max_number = max(max_min_data_list, key=lambda x: int(x["Number of employees"]))["Number of employees"]
     min_number = min(max_min_data_list, key=lambda x: int(x["Number of employees"]))["Number of employees"]
@@ -84,6 +84,8 @@ def correlation_coefficient(country_data_list):
     # only use the organisations which show an increase in profits from 2020 to 2021
     country_valid_data_list = [x for x in country_data_list if
                                int(x["Profits in 2021(Million)"]) - int(x["Profits in 2020(Million)"]) > 0]
+    if len(country_valid_data_list) == 0 or len(country_valid_data_list) == 1:
+        return 0
     # get the profits in 2021 list
     profits_2021_list = [int(x["Profits in 2021(Million)"]) for x in country_valid_data_list]
     # get the median salaries list
@@ -97,31 +99,25 @@ def correlation_coefficient(country_data_list):
     denominator = ((sum([(x - profits_mean) ** 2 for x in profits_2021_list]) *
                     sum([(y - median_salary_mean) ** 2 for y in median_salary_list]))
                    ** 0.5)
-    if denominator == 0:
-        return 0
     # round to 4 decimal places
-    return round(molecule / denominator, 4)
+    return round(molecule / denominator, 4) if denominator != 0 else 0
 
 
 def main(csvfile, country):
     # check input params
     if len(csvfile) == 0 or len(country) == 0:
-        print("input params error: csvfile:[%s] or country:[%a] is empty" % csvfile, country)
         return [], [], 0, 0
     # read file
     read_data = read_file(csvfile)
     if read_data is None or len(read_data) == 0:
-        print("read csvfile:[%s] error: file is empty" % csvfile)
         return [], [], 0, 0
     # store data to a list and filter by country
     data_list = save_file_data(read_data)
     if len(data_list) == 0:
-        print("read csvfile:[%s] error: read data is empty" % csvfile)
         return [], [], 0, 0
     # data filter by country
     country_data_list = filter_country_data(country, data_list)
     if len(country_data_list) == 0:
-        print("read csvfile:[%s] error: country:[%s] data is empty" % (csvfile, country))
         return [], [], 0, 0
     # maximum and minimum
     max_min_list = max_min(country_data_list)
@@ -135,4 +131,4 @@ def main(csvfile, country):
 
 
 if __name__ == '__main__':
-    print(main("./Organisations.csv", "Belgium"))
+    print(main("./Organisations.csv", "Afghanistan"))

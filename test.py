@@ -1,5 +1,3 @@
-import logging as log
-
 import numpy as np
 
 import solution as solution
@@ -14,7 +12,7 @@ def read_file(csvfile):
             data = f.readlines()
             return data
     except IOError:
-        log.error("read csvfile:%s error" % csvfile)
+        print("read csvfile:%s error" % csvfile)
         return None
 
 
@@ -66,8 +64,9 @@ def check_max_min(max_min_list, country_data_list):
 
 
 def check_stdv(country, stdv, country_data_list, data_list):
-    expect_sd_country = round(np.std([int(x["Median Salary"]) for x in country_data_list], ddof=1), 4)
-    expect_sd_all = round(np.std([int(x["Median Salary"]) for x in data_list], ddof=1), 4)
+    expect_sd_country = round(np.std([int(x["Median Salary"]) for x in country_data_list], ddof=1), 4) if len(
+        country_data_list) > 1 else 0
+    expect_sd_all = round(np.std([int(x["Median Salary"]) for x in data_list], ddof=1), 4) if len(data_list) > 1 else 0
     solution_sd_country = stdv[0]
     solution_sd_all = stdv[1]
     # check
@@ -94,6 +93,8 @@ def check_correlation(country, solution_corr, country_data_list):
     # only use the organisations which show an increase in profits from 2020 to 2021
     country_valid_data_list = [x for x in country_data_list if
                                int(x["Profits in 2021(Million)"]) - int(x["Profits in 2020(Million)"]) > 0]
+    if len(country_valid_data_list) == 0 or len(country_valid_data_list) == 1:
+        return 0
     # get the profits in 2021 list
     profits_2021_list = [int(x["Profits in 2021(Million)"]) for x in country_valid_data_list]
     # get the median salaries list
@@ -117,12 +118,12 @@ def test_case(csvfile, country, country_data_list, data_list):
     # check correlation
     check_correlation(country, correlation, country_data_list)
     # result
-    print("Congratulations! All test cases passed! Well done!")
+    print("Congratulations! Country:[%s] passed all the tests!! Well done!!!" % country)
 
 
 def test_one_case():
     csvfile = "./Organisations.csv"
-    country = "Belgium"
+    country = "Afghanistan"
     # read file, get all countries
     read_data = read_file(csvfile)
     # get data list
@@ -141,12 +142,7 @@ def test_all_case():
     data_list = save_file_data(read_data)
     country_list = list(set([read_data[i].strip().split(',')[3] for i in range(len(read_data)) if i > 0]))
     for country in country_list:
-        log.error(("start testing country: %s" % country))
+        print("Start testing country:[%s]" % country)
         # get country list
         country_data_list = filter_country_data(country, data_list)
         test_case(csvfile, country, country_data_list, data_list)
-
-
-if __name__ == '__main__':
-    test_one_case()
-    # test_all_case()
