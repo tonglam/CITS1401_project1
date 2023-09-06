@@ -43,11 +43,13 @@ def check_max_min(max_min_list, country_data_list):
     solution_min_name = max_min_list[1]
     expect_max = max([int(x["Number of employees"]) for x in country_data_list])
     expect_min = min([int(x["Number of employees"]) for x in country_data_list])
-    # check
+    # check num
     for x in country_data_list:
         name = x["Name"].lower()
         assert int(x["Number of employees"]) <= expect_max, ("max name is wrong, expected:[%s], solution:[%s]" % (name, solution_max_name))
         assert int(x["Number of employees"]) >= expect_min, ("min name is wrong, expected:[%s], solution:[%s]" % (name, solution_min_name))
+    # check order
+
 
 
 def check_stdv(country, stdv, country_data_list, data_list):
