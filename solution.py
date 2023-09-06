@@ -30,9 +30,9 @@ def filter_country_data(country, data_list):
     return [x for x in data_list if x['Country'].upper() == country.upper()]
 
 
-def max_min(data_list):
+def max_min(country_data_list):
     # filter by year range, founded in the year range of 1981 to 2000 (inclusive)
-    max_min_data_list = [x for x in data_list if 1981 < int(x["Founded"]) <= 2000]
+    max_min_data_list = [x for x in country_data_list if 1981 < int(x["Founded"]) <= 2000]
     if len(max_min_data_list) == 0:
         return ["", ""]
     # find max and min number
@@ -70,17 +70,14 @@ def calculate_sd(data_list):
     return (diff_sq_sum / (length - 1)) ** 0.5
 
 
-def profit_ratio(data_list):
+def profit_ratio(country_data_list):
     # get profits list
-    profits_list = [int(x["Profits in 2021(Million)"]) - int(x["Profits in 2020(Million)"]) for x in data_list]
+    profits_list = [int(x["Profits in 2021(Million)"]) - int(x["Profits in 2020(Million)"]) for x in country_data_list]
     # calculate the ratio
     positive = sum([profit for profit in profits_list if profit > 0])
     negative = abs(sum([profit for profit in profits_list if profit < 0]))
-    # all organization profits are increasing
-    if negative == 0:
-        return 0
     # round to 4 decimal places
-    return round(positive / negative, 4)
+    return round(positive / negative, 4) if negative != 0 else 0
 
 
 def correlation_coefficient(country_data_list):
