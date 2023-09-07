@@ -146,7 +146,3 @@ def test_all_case():
         # get country list
         country_data_list = filter_country_data(country, data_list)
         test_case(csvfile, country, country_data_list, data_list)
-
-
-def test_edge_case():
-    pass
