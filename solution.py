@@ -131,4 +131,4 @@ def main(csvfile, country):
 
 
 if __name__ == '__main__':
-    print(main("./Organisations.csv", "Afghanistan"))
+    print(main("./Organisations.csv", "Belgium"))
