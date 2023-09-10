@@ -22,8 +22,6 @@ def save_file_data(read_data):
 
 
 def filter_country_data(country, data_list):
-    if len(data_list) == 0:
-        return []
     # filter by country
     return [x for x in data_list if x['Country'].upper() == country.upper()]
 
@@ -52,17 +50,15 @@ def standard_deviation(country_data_list, data_list):
     country_salary_list = [int(x["Median Salary"]) for x in country_data_list]
     all_salary_list = [int(x["Median Salary"]) for x in data_list]
     # calculate the standard deviation, round to 4 decimal places
-    country_sd = round(calculate_sd(country_salary_list), 4)
-    all_sd = round(calculate_sd(all_salary_list), 4)
+    # standard deviation must contain at least two values
+    country_sd = round(calculate_sd(country_salary_list), 4) if len(country_salary_list) > 1 else 0
+    all_sd = round(calculate_sd(all_salary_list), 4) if len(all_salary_list) > 1 else 0
     return [country_sd, all_sd]
 
 
 def calculate_sd(data_list):
     # calculate length
     length = len(data_list)
-    # standard deviation must contain at least two values
-    if length == 1:
-        return 0
     # calculate mean
     mean = sum(data_list) / length
     # calculate standard deviation
@@ -73,6 +69,8 @@ def calculate_sd(data_list):
 def profit_ratio(country_data_list):
     # get profits list
     profits_list = [int(x["Profits in 2021(Million)"]) - int(x["Profits in 2020(Million)"]) for x in country_data_list]
+    if len(profits_list) == 0:
+        return 0
     # calculate the ratio
     positive = sum([profit for profit in profits_list if profit > 0])
     negative = abs(sum([profit for profit in profits_list if profit < 0]))
@@ -106,19 +104,19 @@ def correlation_coefficient(country_data_list):
 def main(csvfile, country):
     # check input params
     if len(csvfile) == 0 or len(country) == 0:
-        return [], [], 0, 0
+        return ["", ""], [0, 0], 0, 0
     # read file
     read_data = read_file(csvfile)
     if read_data is None or len(read_data) == 0:
-        return [], [], 0, 0
+        return ["", ""], [0, 0], 0, 0
     # store data to a list and filter by country
     data_list = save_file_data(read_data)
-    if len(data_list) == 0:
-        return [], [], 0, 0
+    if not any(data_list):
+        return ["", ""], [0, 0], 0, 0
     # data filter by country
     country_data_list = filter_country_data(country, data_list)
-    if len(country_data_list) == 0:
-        return [], [], 0, 0
+    if not any(country_data_list):
+        return ["", ""], [0, 0], 0, 0
     # maximum and minimum
     max_min_list = max_min(country_data_list)
     # standard deviation
@@ -131,4 +129,4 @@ def main(csvfile, country):
 
 
 if __name__ == '__main__':
-    print(main("./Organisations.csv", "Belgium"))
+    print(main("./Organisations.csv", "Fuji"))
