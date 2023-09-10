@@ -23,7 +23,7 @@ def save_file_data(read_data):
 
 def max_min(country_data_list):
     # filter by year range, founded in the year range of 1981 to 2000 (inclusive)
-    max_min_data_list = [x for x in country_data_list if 1981 < int(x["founded"]) <= 2000]
+    max_min_data_list = [x for x in country_data_list if 1981 <= int(x["founded"]) <= 2000]
     if len(max_min_data_list) == 0:
         return ["", ""]
     elif len(max_min_data_list) == 1:

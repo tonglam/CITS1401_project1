@@ -3,7 +3,7 @@ import os
 
 import numpy as np
 
-import solution as solution
+import PJNOTDONE as solution
 
 default_csvfile = "./Organisations.csv"
 
@@ -39,7 +39,7 @@ def filter_country_data(country, data_list):
 
 
 def check_max_min(max_min_list, country_data_list):
-    country_data_list = [x for x in country_data_list if 1981 < int(x["founded"]) <= 2000]
+    country_data_list = [x for x in country_data_list if 1981 <= int(x["founded"]) <= 2000]
     # empty list
     if not any(max_min_list):
         assert not any(country_data_list) is True, "max_min_list and country_data_list must be empty at the same time"
@@ -288,7 +288,7 @@ def read_raw_data_from_dict(country_data_list):
 # test 1: test one case
 def test_one_case():
     print("\nstart testing one case\n")
-    country = "Belgium"
+    country = "Cameroon"
     country_data_list, data_list = running_preparing(country=country)
     # test
     run_test_case(default_csvfile, country, country_data_list, data_list)
