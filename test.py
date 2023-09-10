@@ -3,7 +3,7 @@ import os
 
 import numpy as np
 
-import PJNOTDONE as solution
+import solution as solution
 
 default_csvfile = "./Organisations.csv"
 
@@ -288,7 +288,7 @@ def read_raw_data_from_dict(country_data_list):
 # test 1: test one case
 def test_one_case():
     print("\nstart testing one case\n")
-    country = "Cameroon"
+    country = "Belgium"
     country_data_list, data_list = running_preparing(country=country)
     # test
     run_test_case(default_csvfile, country, country_data_list, data_list)
