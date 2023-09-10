@@ -28,17 +28,24 @@ def filter_country_data(country, data_list):
 
 def max_min(country_data_list):
     # filter by year range, founded in the year range of 1981 to 2000 (inclusive)
-    max_min_data_list = [x for x in country_data_list if 1981 < int(x["Founded"]) <= 2000]
+    max_min_data_list = [x for x in country_data_list if len(x["Founded"]) > 0 and 1981 < int(x["Founded"]) <= 2000]
     if len(max_min_data_list) == 0:
         return ["", ""]
     elif len(max_min_data_list) == 1:
         return [max_min_data_list[0]["Name"], max_min_data_list[0]["Name"]]
+    # get the max and min number list, filter empty value
+    max_min_number_list = [int(x["Number of employees"]) for x in max_min_data_list if
+                           len(x["Number of employees"]) > 0]
     # find max and min number
-    max_number = max(max_min_data_list, key=lambda x: int(x["Number of employees"]))["Number of employees"]
-    min_number = min(max_min_data_list, key=lambda x: int(x["Number of employees"]))["Number of employees"]
+    max_number = max(max_min_data_list, key=lambda x: max_min_number_list)["Number of employees"]
+    min_number = min(max_min_data_list, key=lambda x: max_min_number_list)["Number of employees"]
     # find max and min name list
-    max_name_list = [x["Name"] for x in max_min_data_list if x["Number of employees"] == max_number]
-    min_name_list = [x["Name"] for x in max_min_data_list if x["Number of employees"] == min_number]
+    max_name_list = [x["Name"] for x in max_min_data_list if
+                     len(x["Number of employees"]) > 0 and len(x["Name"]) > 0 and x[
+                         "Number of employees"] == max_number]
+    min_name_list = [x["Name"] for x in max_min_data_list if
+                     len(x["Number of employees"]) > 0 and len(x["Name"]) > 0 and x[
+                         "Number of employees"] == min_number]
     # sort the list by name
     max_name_list.sort()
     min_name_list.sort()
