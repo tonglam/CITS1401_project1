@@ -111,12 +111,10 @@ def main(csvfile, country):
         return ["", ""], [0, 0], 0, 0
     # store data to a list and filter by country
     data_list = save_file_data(read_data)
-    if not any(data_list):
+    if len(data_list) == 0:
         return ["", ""], [0, 0], 0, 0
     # data filter by country
     country_data_list = filter_country_data(country, data_list)
-    if not any(country_data_list):
-        return ["", ""], [0, 0], 0, 0
     # maximum and minimum
     max_min_list = max_min(country_data_list)
     # standard deviation
@@ -129,4 +127,4 @@ def main(csvfile, country):
 
 
 if __name__ == '__main__':
-    print(main("./Organisations.csv", "Fuji"))
+    print(main("./Organisations.csv", "Japan"))
