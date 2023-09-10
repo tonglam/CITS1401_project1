@@ -1,51 +1,39 @@
 def read_file(csvfile):
     try:
         with open(csvfile, 'r') as f:
-            # read file by lines
             data = f.readlines()
             return data
     except IOError:
+        print("Cannot open file:[%s]", csvfile)
         return None
 
 
 def save_file_data(read_data):
     data_list = []
     # get csv header
-    header = read_data[0].strip().split(',')
+    header = read_data[0].lower().strip().split(',')
     # save to a dictionary list
     for i in range(1, len(read_data)):
-        data = read_data[i].strip().split(',')
+        data = read_data[i].lower().strip().split(',')
         # save to a dictionary
         data_dict = dict(zip(header, data))
         data_list.append(data_dict)
     return data_list
 
 
-def filter_country_data(country, data_list):
-    # filter by country
-    return [x for x in data_list if x['Country'].upper() == country.upper()]
-
-
 def max_min(country_data_list):
     # filter by year range, founded in the year range of 1981 to 2000 (inclusive)
-    max_min_data_list = [x for x in country_data_list if len(x["Founded"]) > 0 and 1981 < int(x["Founded"]) <= 2000]
+    max_min_data_list = [x for x in country_data_list if 1981 < int(x["founded"]) <= 2000]
     if len(max_min_data_list) == 0:
         return ["", ""]
     elif len(max_min_data_list) == 1:
-        return [max_min_data_list[0]["Name"], max_min_data_list[0]["Name"]]
-    # get the max and min number list, filter empty value
-    max_min_number_list = [int(x["Number of employees"]) for x in max_min_data_list if
-                           len(x["Number of employees"]) > 0]
+        return [max_min_data_list[0]["name"], max_min_data_list[0]["name"]]
     # find max and min number
-    max_number = max(max_min_data_list, key=lambda x: max_min_number_list)["Number of employees"]
-    min_number = min(max_min_data_list, key=lambda x: max_min_number_list)["Number of employees"]
+    max_number = max(max_min_data_list, key=lambda x: int(x["number of employees"]))["number of employees"]
+    min_number = min(max_min_data_list, key=lambda x: int(x["number of employees"]))["number of employees"]
     # find max and min name list
-    max_name_list = [x["Name"] for x in max_min_data_list if
-                     len(x["Number of employees"]) > 0 and len(x["Name"]) > 0 and x[
-                         "Number of employees"] == max_number]
-    min_name_list = [x["Name"] for x in max_min_data_list if
-                     len(x["Number of employees"]) > 0 and len(x["Name"]) > 0 and x[
-                         "Number of employees"] == min_number]
+    max_name_list = [x["name"] for x in max_min_data_list if x["number of employees"] == max_number]
+    min_name_list = [x["name"] for x in max_min_data_list if x["number of employees"] == min_number]
     # sort the list by name
     max_name_list.sort()
     min_name_list.sort()
@@ -54,8 +42,8 @@ def max_min(country_data_list):
 
 def standard_deviation(country_data_list, data_list):
     # get the salary lists
-    country_salary_list = [int(x["Median Salary"]) for x in country_data_list]
-    all_salary_list = [int(x["Median Salary"]) for x in data_list]
+    country_salary_list = [int(x["median salary"]) for x in country_data_list]
+    all_salary_list = [int(x["median salary"]) for x in data_list]
     # calculate the standard deviation, round to 4 decimal places
     # standard deviation must contain at least two values
     country_sd = round(calculate_sd(country_salary_list), 4) if len(country_salary_list) > 1 else 0
@@ -75,7 +63,7 @@ def calculate_sd(data_list):
 
 def profit_ratio(country_data_list):
     # get profits list
-    profits_list = [int(x["Profits in 2021(Million)"]) - int(x["Profits in 2020(Million)"]) for x in country_data_list]
+    profits_list = [int(x["profits in 2021(million)"]) - int(x["profits in 2020(million)"]) for x in country_data_list]
     if len(profits_list) == 0:
         return 0
     # calculate the ratio
@@ -88,13 +76,13 @@ def profit_ratio(country_data_list):
 def correlation_coefficient(country_data_list):
     # only use the organisations which show an increase in profits from 2020 to 2021
     country_valid_data_list = [x for x in country_data_list if
-                               int(x["Profits in 2021(Million)"]) - int(x["Profits in 2020(Million)"]) > 0]
+                               int(x["profits in 2021(million)"]) - int(x["profits in 2020(million)"]) > 0]
     if len(country_valid_data_list) == 0 or len(country_valid_data_list) == 1:
         return 0
     # get the profits in 2021 list
-    profits_2021_list = [int(x["Profits in 2021(Million)"]) for x in country_valid_data_list]
+    profits_2021_list = [int(x["profits in 2021(million)"]) for x in country_valid_data_list]
     # get the median salaries list
-    median_salary_list = [int(x["Median Salary"]) for x in country_valid_data_list]
+    median_salary_list = [int(x["median salary"]) for x in country_valid_data_list]
     # calculate the means
     profits_mean = sum(profits_2021_list) / len(profits_2021_list)
     median_salary_mean = sum(median_salary_list) / len(median_salary_list)
@@ -121,7 +109,7 @@ def main(csvfile, country):
     if len(data_list) == 0:
         return ["", ""], [0, 0], 0, 0
     # data filter by country
-    country_data_list = filter_country_data(country, data_list)
+    country_data_list = [x for x in data_list if x['country'] == country.lower()]
     # maximum and minimum
     max_min_list = max_min(country_data_list)
     # standard deviation
@@ -134,4 +122,4 @@ def main(csvfile, country):
 
 
 if __name__ == '__main__':
-    print(main("./Organisations.csv", "Japan"))
+    print(main("./Organisations.csv", "belGIum"))
