@@ -8,7 +8,7 @@ import solution as solution
 default_csvfile = "./Organisations.csv"
 
 
-def read_file(csvfile):
+def read_file(csvfile: str) -> list:
     try:
         with open(csvfile, 'r') as f:
             data = f.readlines()
@@ -18,7 +18,7 @@ def read_file(csvfile):
         return None
 
 
-def save_file_data(read_data):
+def save_file_data(read_data: list) -> list:
     data_list = []
     # get csv header
     header = read_data[0].lower().strip().split(',')
@@ -31,14 +31,14 @@ def save_file_data(read_data):
     return data_list
 
 
-def filter_country_data(country, data_list):
+def filter_country_data(country: str, data_list: list) -> list:
     if len(data_list) == 0:
         return None
     # filter by country
     return [x for x in data_list if x['country'] == country.lower()]
 
 
-def check_max_min(max_min_list, country_data_list):
+def check_max_min(max_min_list: list, country_data_list: list) -> None:
     country_data_list = [x for x in country_data_list if 1981 <= int(x["founded"]) <= 2000]
     # empty list
     if not any(max_min_list):
@@ -75,7 +75,7 @@ def check_max_min(max_min_list, country_data_list):
     print("[max name, min name]:%s\n" % max_min_list)
 
 
-def check_stdv(country, stdv, country_data_list, data_list):
+def check_stdv(country: str, stdv: list, country_data_list: list, data_list: list) -> None:
     assert len(stdv) == 2, "standard deviation must contains two elements"
     expect_sd_country = round(np.std([int(x["median salary"]) for x in country_data_list], ddof=1), 4) if len(
         country_data_list) > 1 else 0
@@ -92,7 +92,7 @@ def check_stdv(country, stdv, country_data_list, data_list):
     print("[country standard deviation, all standard deviation]:%s\n" % stdv)
 
 
-def check_ratio(country_data_list, solution_ratio):
+def check_ratio(country_data_list: list, solution_ratio: list) -> None:
     if len(country_data_list) == 0:
         solution_ratio = 0
     # get profits list
@@ -109,7 +109,7 @@ def check_ratio(country_data_list, solution_ratio):
     print("[ratio]:%s\n" % solution_ratio)
 
 
-def check_correlation(country, solution_corr, country_data_list):
+def check_correlation(country: str, solution_corr: float, country_data_list: list) -> None:
     if len(country_data_list) == 0:
         assert solution_corr == 0, ("country:%s correlation is wrong, expected:[%s], solution:[%s]" % (
             country, 0, solution_corr))
@@ -136,7 +136,7 @@ def check_correlation(country, solution_corr, country_data_list):
     print("[correlation]:%s\n" % solution_corr)
 
 
-def run_test_case(csvfile, country, country_data_list, data_list):
+def run_test_case(csvfile: str, country: str, country_data_list: list, data_list: list) -> None:
     print("Start testing country:[%s]\n" % country)
     max_min_list, stdv, ratio, correlation = solution.main(csvfile, country)
     # check max and min
@@ -151,7 +151,7 @@ def run_test_case(csvfile, country, country_data_list, data_list):
     print("Congratulations! Country:[%s] passed all the tests!! Well done!!!\n" % country)
 
 
-def running_preparing(csvfile=default_csvfile, country="Belgium"):
+def running_preparing(csvfile: str = default_csvfile, country: str = "Belgium") -> tuple:
     # read file, get all countries
     read_data = read_file(csvfile)
     # get data list
@@ -161,7 +161,7 @@ def running_preparing(csvfile=default_csvfile, country="Belgium"):
     return country_data_list, data_list
 
 
-def test_case_intensive():
+def test_case_intensive() -> None:
     print("\nstart testing case intensive\n")
     country = "BELgiUm"
     country_data_list, data_list = running_preparing(country=country)
@@ -170,7 +170,7 @@ def test_case_intensive():
     print("finish testing case intensive")
 
 
-def test_empty_file():
+def test_empty_file() -> None:
     print("\nstart testing empty file\n")
     # read file, get all countries
     read_data = read_file(default_csvfile)
@@ -195,20 +195,20 @@ def test_empty_file():
     print("finish testing empty file")
 
 
-def test_not_exists_country():
+def test_not_exists_country() -> None:
     print("\nstart testing not exists country\n")
     country_data_list, data_list = running_preparing(country="TEST")
     run_test_case(default_csvfile, "TEST", country_data_list, data_list)
     print("finish testing not exists country")
 
 
-def test_empty_country():
+def test_empty_country() -> None:
     print("\nstart testing empty country\n")
     run_test_case(default_csvfile, "", [], [])
     print("finish testing empty country")
 
 
-def test_exist_country_one_record():
+def test_exist_country_one_record() -> None:
     print("\nstart testing existing country, one valid record\n")
     test_file = "./exist_country_with_one_record.csv"
     test_country = "Japan"
@@ -222,7 +222,7 @@ def test_exist_country_one_record():
     print("finish testing existing country, one valid record")
 
 
-def test_exist_country_two_records():
+def test_exist_country_two_records() -> None:
     print("\nstart testing existing country, two same valid record\n")
     test_file = "./exist_country_with_two_records.csv"
     test_country = "Japan"
@@ -237,7 +237,7 @@ def test_exist_country_two_records():
     print("finish testing existing country, two same valid record")
 
 
-def test_other_edge_cases():
+def test_other_edge_cases() -> None:
     print("\nstart testing other edge cases\n")
     test_file = "./other_edge_records.csv"
     test_country = "Japan"
@@ -262,7 +262,7 @@ def test_other_edge_cases():
     print("finish testing other edge cases")
 
 
-def create_test_file(test_file, country_data_list):
+def create_test_file(test_file: str, country_data_list: list) -> None:
     # check file exists
     if os.path.exists(test_file):
         os.remove(test_file)
@@ -275,7 +275,7 @@ def create_test_file(test_file, country_data_list):
             f.write("\n")
 
 
-def read_raw_data_from_dict(country_data_list):
+def read_raw_data_from_dict(country_data_list: list) -> list:
     for x in country_data_list:
         x["founded"] = int(x["founded"])
         x["number of employees"] = int(x["number of employees"])
@@ -286,7 +286,7 @@ def read_raw_data_from_dict(country_data_list):
 
 
 # test 1: test one case
-def test_one_case():
+def test_one_case() -> None:
     print("\nstart testing one case\n")
     country = "Belgium"
     country_data_list, data_list = running_preparing(country=country)
@@ -296,7 +296,7 @@ def test_one_case():
 
 
 # test 2: test all cases
-def test_all_cases():
+def test_all_cases() -> None:
     print("\nstart testing all cases\n")
     # read file, get all countries
     read_data = read_file(default_csvfile)
@@ -311,7 +311,7 @@ def test_all_cases():
 
 
 # test 3: test edge cases
-def test_edge_cases():
+def test_edge_cases() -> None:
     # case insensitive
     test_case_intensive()
     # empty file
