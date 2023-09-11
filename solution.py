@@ -1,3 +1,10 @@
+"""
+CITS1401 Project 1
+Full Name: Tong LAN
+Student ID: 24056082
+"""
+
+
 def read_file(csvfile: str) -> list:
     try:
         with open(csvfile, 'r') as f:
@@ -125,7 +132,3 @@ def main(csvfile: str, country: str) -> tuple:
     # correlation
     correlation = correlation_coefficient(country, country_data_list)
     return max_min_list, stdv, ratio, correlation
-
-
-if __name__ == '__main__':
-    print(main("./Organisations.csv", "belGIum"))
