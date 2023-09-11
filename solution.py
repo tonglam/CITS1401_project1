@@ -33,7 +33,7 @@ def max_min(country: str, country_data_list: list) -> list:
     max_min_data_list = [x for x in country_data_list if 1981 <= int(x["founded"]) <= 2000]
     if len(max_min_data_list) == 0:
         print("Country:[%s], no organizations founded in the year range of 1981 to 2000 (inclusive)" % country)
-        return []
+        return ["", ""]
     elif len(max_min_data_list) == 1:
         return [max_min_data_list[0]["name"], max_min_data_list[0]["name"]]
     # find max and min number
@@ -112,15 +112,18 @@ def correlation_coefficient(country: str, country_data_list: list) -> float:
 def main(csvfile: str, country: str) -> tuple:
     # check input params
     if len(csvfile) == 0 or len(country) == 0:
-        return [], [0, 0], 0, 0
+        print("Please input the valid params")
+        return ["", ""], [0, 0], 0, 0
     # read file
     read_data = read_file(csvfile)
     if read_data is None or len(read_data) == 0:
-        return [], [0, 0], 0, 0
+        print("Input file:[] is empty or not exists" % csvfile)
+        return ["", ""], [0, 0], 0, 0
     # store data to a list and filter by country
     data_list = save_file_data(read_data)
     if len(data_list) == 0:
-        return [], [0, 0], 0, 0
+        print("Input file:[] contains no data" % csvfile)
+        return ["", ""], [0, 0], 0, 0
     # data filter by country
     country_data_list = [x for x in data_list if x['country'] == country.lower()]
     # maximum and minimum
