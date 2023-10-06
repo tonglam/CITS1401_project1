@@ -29,3 +29,6 @@ iv) Correlation: A numeric value which is a correlation between median salaries 
 profits in 2021 for all the organisations in the input country which have an increase
 in profits from 2020 to 2021. The expected output is a single float value.
 For example: -0.1013
+
+
+Project 1 Marks: 30/30
