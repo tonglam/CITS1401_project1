@@ -1,10 +1,3 @@
-"""
-CITS1401 Project 1
-Full Name: Tong LAN
-Student ID: 24056082
-"""
-
-
 def read_file(csvfile: str) -> list:
     try:
         with open(csvfile, 'r') as f:
